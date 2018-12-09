@@ -1,0 +1,25 @@
+{
+  "name": "bpromise",
+  "version": "1.0.0",
+  "description": "A simple Promises/A+ implementation.",
+  "main": "bPromise.js",
+  "scripts": {
+    "test": "promises-aplus-tests bPromise.test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/skyline-123/bPromise.git"
+  },
+  "keywords": [
+    "promises-aplus"
+  ],
+  "author": "skyline-123",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/skyline-123/bPromise/issues"
+  },
+  "homepage": "https://github.com/skyline-123/bPromise#readme",
+  "dependencies": {
+    "promises-aplus-tests": "^2.1.2"
+  }
+}
