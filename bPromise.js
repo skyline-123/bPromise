@@ -155,13 +155,13 @@ Promise.deferred = function() {
   return dfd
 }
 
-Promise.resolved = function (value) {
+Promise.resolve = function (value) {
   return new Promise(function (resolve, reject) {
     resolve(value);
   });
 }
 
-Promise.rejected = function (value) {
+Promise.reject = function (value) {
   return new Promise(function (resolve, reject) {
     reject(value);
   });
