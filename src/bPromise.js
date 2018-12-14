@@ -21,16 +21,15 @@ function Promise (callback) {
 
   this.handleCallback = function (cb) {
     if (this.isSupportMutationObserver) {
-      var observer;
-      var config = {
-        attributes: true
-      };
-      observer = new MutationObserver(function () {
+      var observer = new MutationObserver(function () {
         if (type(cb) === 'function') {
           cb();
           observer.disconnect();
         }
       });
+      var config = {
+        attributes: true
+      };
       observer.observe(this.element, config);
       this.element.setAttribute('class', '');
     } else {
