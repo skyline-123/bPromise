@@ -5,4 +5,4 @@
     <img src="https://promisesaplus.com/assets/logo-small.png" alt="Promises/A+ logo"
          title="Promises/A+ 1.0 compliant" align="right" />
 </a>
-A simple Promises/A+ implementation in browser. bPromise means it's an implementation in browser and it handles asynchrony via window.setTimeout api.
+A simple Promises/A+ implementation for both in a browser and in Node.js.
