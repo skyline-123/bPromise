@@ -4,7 +4,7 @@
   "description": "A simple Promises/A+ implementation.",
   "main": "index.js",
   "scripts": {
-    "test": "npm run build && promises-aplus-tests ./bPromise.test.js",
+    "test": "npm run build && promises-aplus-tests ./src/bPromise.test.js",
     "build": "rm -f ./index.js && rollup -c"
   },
   "repository": {

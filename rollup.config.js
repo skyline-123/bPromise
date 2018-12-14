@@ -1,7 +1,7 @@
 const rollup = require('rollup');
 const { uglify } = require('rollup-plugin-uglify');
 module.exports = {
-  input: 'bPromise.js',
+  input: './src/bPromise.js',
   plugins: [uglify()],
   output: {
     file: 'index.js',
