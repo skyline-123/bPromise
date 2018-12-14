@@ -32,7 +32,7 @@ function Promise (callback) {
       };
       observer.observe(this.element, config);
       this.element.setAttribute('class', '');
-    } else if (typeof window=== 'undefined' && typeof process !== 'undefined') {
+    } else if (typeof window === 'undefined' && typeof process !== 'undefined') {
       process.nextTick(cb);
     } else {
       setTimeout(cb);
