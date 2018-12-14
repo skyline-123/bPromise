@@ -2,15 +2,44 @@ function type (arg) {
   return Object.prototype.toString.call(arg).slice(8, -1).toLowerCase();
 }
 
+function isBrowserMutationObserver () {
+  return typeof window !== 'undefined' && typeof MutationObserver !== 'undefined';
+}
+
 function Promise (callback) {
   var _this = this;
   this.PromiseStatus = 'pending';
   this.PromiseValue;
   this.onResolvedCallbacks = [];
   this.onRejectedCallbacks = [];
+  this.element;
+  this.isSupportMutationObserver = isBrowserMutationObserver();
+
+  if (this.isSupportMutationObserver) {
+    this.element = document.createElement('span');
+  }
+
+  this.handleCallback = function (cb) {
+    if (this.isSupportMutationObserver) {
+      var observer;
+      var config = {
+        attributes: true
+      };
+      observer = new MutationObserver(function () {
+        if (type(cb) === 'function') {
+          cb();
+          observer.disconnect();
+        }
+      });
+      observer.observe(this.element, config);
+      this.element.setAttribute('class', '');
+    } else {
+      setTimeout(cb);
+    }
+  }
 
   function resolve (value) {
-    setTimeout(function () {
+    var cb = function () {
       if (_this.PromiseStatus === 'pending') {
         _this.PromiseStatus = 'fulfilled';
         _this.PromiseValue = value;
@@ -18,11 +47,12 @@ function Promise (callback) {
           fn(value);
         });
       }
-    }, 0);
+    }
+    _this.handleCallback(cb);
   }
 
   function reject (reason) {
-    setTimeout(function () {
+    var cb = function () {
       if (_this.PromiseStatus === 'pending') {
         _this.PromiseStatus = 'rejected';
         _this.PromiseValue = reason;
@@ -30,7 +60,8 @@ function Promise (callback) {
           fn(reason);
         });
       }
-    }, 0);
+    }
+    _this.handleCallback(cb);
   }
 
   try {
@@ -91,7 +122,7 @@ Promise.prototype.then = function (onFulfilled, onRejected) {
   onRejected = type(onRejected) === 'function' ? onRejected : function (reason) { throw reason; };
   if (this.PromiseStatus === 'fulfilled') {
     promise2 = new Promise(function (resolve, reject) {
-      setTimeout(function () {
+      var cb = function () {
         try {
           var x = onFulfilled(_this.PromiseValue);
           // If either onFulfilled or onRejected returns a value x, run the Promise Resolution Procedure [[Resolve]](promise2, x).
@@ -99,13 +130,14 @@ Promise.prototype.then = function (onFulfilled, onRejected) {
         } catch (reason) {
           reject(reason);
         }
-      }, 0);
+      };
+      _this.handleCallback(cb);
     });
   }
 
   if (this.PromiseStatus === 'rejected') {
     promise2 = new Promise(function (resolve, reject) {
-      setTimeout(function () {
+      var cb = function () {
         try {
           var x = onRejected(_this.PromiseValue);
           // If either onFulfilled or onRejected returns a value x, run the Promise Resolution Procedure [[Resolve]](promise2, x).
@@ -113,7 +145,8 @@ Promise.prototype.then = function (onFulfilled, onRejected) {
         } catch (reason) {
           reject(reason);
         }
-      }, 0);
+      };
+      _this.handleCallback(cb);
     });
   }
 
@@ -155,7 +188,7 @@ Promise.deferred = function() {
   return dfd
 }
 
-Promise.resolve = function (value) {
+Promise.resolved = function (value) {
   return new Promise(function (resolve, reject) {
     resolve(value);
   });
@@ -167,4 +200,4 @@ Promise.reject = function (value) {
   });
 }
 
-module.exports = Promise;
+export default Promise;

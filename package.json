@@ -2,9 +2,10 @@
   "name": "bpromise",
   "version": "1.0.0",
   "description": "A simple Promises/A+ implementation.",
-  "main": "bPromise.js",
+  "main": "index.js",
   "scripts": {
-    "test": "promises-aplus-tests bPromise.test.js"
+    "test": "npm run build && promises-aplus-tests ./bPromise.test.js",
+    "build": "rm -f ./index.js && rollup -c"
   },
   "repository": {
     "type": "git",
@@ -21,5 +22,9 @@
   "homepage": "https://github.com/skyline-123/bPromise#readme",
   "dependencies": {
     "promises-aplus-tests": "^2.1.2"
+  },
+  "devDependencies": {
+    "rollup": "^0.67.4",
+    "rollup-plugin-uglify": "^6.0.0"
   }
 }
