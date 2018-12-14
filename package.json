@@ -1,6 +1,6 @@
 {
   "name": "bpromise",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A simple Promises/A+ implementation.",
   "main": "index.js",
   "scripts": {
