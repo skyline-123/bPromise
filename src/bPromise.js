@@ -6,7 +6,7 @@ function hasMutationObserver () {
   return typeof window !== 'undefined' && typeof MutationObserver !== 'undefined';
 }
 
-function handleCallback (cb) {
+function handleCallback (cb, element) {
   if (hasMutationObserver()) {
     var observer = new MutationObserver(function () {
       if (type(cb) === 'function') {
@@ -17,8 +17,8 @@ function handleCallback (cb) {
     var config = {
       attributes: true
     };
-    observer.observe(this.element, config);
-    this.element.setAttribute('class', '');
+    observer.observe(element, config);
+    element.setAttribute('class', '');
   } else if (typeof window === 'undefined' && typeof process !== 'undefined') {
     process.nextTick(cb);
   } else {
@@ -48,7 +48,7 @@ function Promise (callback) {
         });
       }
     }
-    handleCallback(cb);
+    handleCallback(cb, this.element);
   }
 
   function reject (reason) {
@@ -61,7 +61,7 @@ function Promise (callback) {
         });
       }
     }
-    handleCallback(cb);
+    handleCallback(cb, _this.element);
   }
 
   try {
@@ -131,7 +131,7 @@ Promise.prototype.then = function (onFulfilled, onRejected) {
           reject(reason);
         }
       };
-      handleCallback(cb);
+      handleCallback(cb, _this.element);
     });
   }
 
@@ -146,7 +146,7 @@ Promise.prototype.then = function (onFulfilled, onRejected) {
           reject(reason);
         }
       };
-      handleCallback(cb);
+      handleCallback(cb, _this.element);
     });
   }
 
