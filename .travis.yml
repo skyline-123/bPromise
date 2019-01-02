@@ -6,7 +6,6 @@ node_js:
   - "9"
   - "10"
 git:
-  depth: false
   submodules: false
 install:
  - npm install
