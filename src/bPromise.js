@@ -2,8 +2,28 @@ function type (arg) {
   return Object.prototype.toString.call(arg).slice(8, -1).toLowerCase();
 }
 
-function isBrowserMutationObserver () {
+function hasMutationObserver () {
   return typeof window !== 'undefined' && typeof MutationObserver !== 'undefined';
+}
+
+function handleCallback (cb) {
+  if (hasMutationObserver()) {
+    var observer = new MutationObserver(function () {
+      if (type(cb) === 'function') {
+        observer.disconnect();
+        cb();
+      }
+    });
+    var config = {
+      attributes: true
+    };
+    observer.observe(this.element, config);
+    this.element.setAttribute('class', '');
+  } else if (typeof window === 'undefined' && typeof process !== 'undefined') {
+    process.nextTick(cb);
+  } else {
+    setTimeout(cb);
+  }
 }
 
 function Promise (callback) {
@@ -13,30 +33,9 @@ function Promise (callback) {
   this.onResolvedCallbacks = [];
   this.onRejectedCallbacks = [];
   this.element;
-  this.isSupportMutationObserver = isBrowserMutationObserver();
 
-  if (this.isSupportMutationObserver) {
+  if (hasMutationObserver()) {
     this.element = document.createElement('span');
-  }
-
-  this.handleCallback = function (cb) {
-    if (this.isSupportMutationObserver) {
-      var observer = new MutationObserver(function () {
-        if (type(cb) === 'function') {
-          cb();
-          observer.disconnect();
-        }
-      });
-      var config = {
-        attributes: true
-      };
-      observer.observe(this.element, config);
-      this.element.setAttribute('class', '');
-    } else if (typeof window === 'undefined' && typeof process !== 'undefined') {
-      process.nextTick(cb);
-    } else {
-      setTimeout(cb);
-    }
   }
 
   function resolve (value) {
@@ -49,7 +48,7 @@ function Promise (callback) {
         });
       }
     }
-    _this.handleCallback(cb);
+    handleCallback(cb);
   }
 
   function reject (reason) {
@@ -62,7 +61,7 @@ function Promise (callback) {
         });
       }
     }
-    _this.handleCallback(cb);
+    handleCallback(cb);
   }
 
   try {
@@ -72,7 +71,7 @@ function Promise (callback) {
   }
 }
 
-var resolutionProcedure = function (promise, x, resolve, reject) {
+function resolutionProcedure (promise, x, resolve, reject) {
   // If promise and x refer to the same object, reject promise with a TypeError as the reason;
   if (promise === x) {
     reject(new TypeError(x));
@@ -132,7 +131,7 @@ Promise.prototype.then = function (onFulfilled, onRejected) {
           reject(reason);
         }
       };
-      _this.handleCallback(cb);
+      handleCallback(cb);
     });
   }
 
@@ -147,7 +146,7 @@ Promise.prototype.then = function (onFulfilled, onRejected) {
           reject(reason);
         }
       };
-      _this.handleCallback(cb);
+      handleCallback(cb);
     });
   }
 
@@ -181,12 +180,12 @@ Promise.prototype.catch = function(onRejected) {
 }
 
 Promise.deferred = function() {
-  var dfd = {}
+  var dfd = {};
   dfd.promise = new Promise(function(resolve, reject) {
-    dfd.resolve = resolve
-    dfd.reject = reject
-  })
-  return dfd
+    dfd.resolve = resolve;
+    dfd.reject = reject;
+  });
+  return dfd;
 }
 
 Promise.resolve = function (value) {
